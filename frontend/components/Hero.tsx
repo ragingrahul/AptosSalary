@@ -23,7 +23,7 @@ const Hero = () => {
                     className='text-center text-[40px] md:text-5xl lg:text-6xl'
                     words='Effortless Payroll for Happier, Thriving Teams!'
                 />
-                <p className='text-center md:tracking-wider mb-4 md:text-lg lg:text-xl'>
+                <p className='text-center md:tracking-wider mb-4 md:text-lg lg:text-xl '>
                     Transforming payroll processes for clarity and employee satisfaction!
                 </p>
                 <a href='#about'>
