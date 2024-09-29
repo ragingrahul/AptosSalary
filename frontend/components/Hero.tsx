@@ -1,6 +1,9 @@
 import React from 'react'
 import { Spotlight } from './ui/Spotlight'
 import { GridBackgroundDemo } from './ui/Grid'
+import { TextGenerateEffect } from './ui/TextGenerateEffect'
+import { ShimmerButton } from './ui/ShimmerButton'
+import { FaCircleArrowRight } from 'react-icons/fa6'
 
 const Hero = () => {
   return (
@@ -16,8 +19,21 @@ const Hero = () => {
                 <h2 className='uppercase tracking-widest text-xs text-center text-blue-100 max-w-100'>
                     Streamlining payroll with precision and ease.
                 </h2>
+                <TextGenerateEffect 
+                    className='text-center text-[40px] md:text-5xl lg:text-6xl'
+                    words='Effortless Payroll for Happier, Thriving Teams!'
+                />
+                <p className='text-center md:tracking-wider mb-4 md:text-lg lg:text-xl'>
+                    Transforming payroll processes for clarity and employee satisfaction!
+                </p>
+                <a href='#about'>
+                    <ShimmerButton 
+                        title='Connect'
+                        icon={<FaCircleArrowRight  />}
+                        position='left'
+                    />
+                </a>
             </div>
-
         </div>
     </div>
   )
