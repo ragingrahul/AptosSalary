@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import {Inter} from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "./provider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -14,7 +15,7 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-const inter = Inter({ subsets: ["latin"]})
+const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "Compensate",
   description: "Compensate your employees or freelancers",
@@ -30,7 +31,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
