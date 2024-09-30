@@ -33,7 +33,8 @@ function Navbar({ className }: { className?: string }) {
         <ShimmerButton 
             title="Connect"
             icon={<IoIosArrowDropdown />}
-            position="right"
+            position="left"
+            otherClasses="w-[190px]"
             handleClick={() => alert("Clicked!")}
         />
       </div>
