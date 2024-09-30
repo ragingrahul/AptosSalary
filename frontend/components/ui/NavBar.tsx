@@ -31,7 +31,7 @@ function Navbar({ className }: { className?: string }) {
                     title="Connect"
                     icon={<IoIosArrowDropdown />}
                     position="left"
-                    otherClasses="w-[200px]"
+                    otherClasses="w-48"
                 />
             </div>
         </div>
