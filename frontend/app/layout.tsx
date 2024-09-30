@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "./provider";
+import { ApolloProvider, AppStateProvider, PetraWalletProvider, ThemeProvider } from "./provider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -31,14 +31,20 @@ export default function RootLayout({
       <body
         className={`${inter.className} antialiased bg-black-100`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
+        <ApolloProvider>
+          <AppStateProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <PetraWalletProvider>
+              {children}
+            </PetraWalletProvider>
+          </ThemeProvider>
+          </AppStateProvider>
+        </ApolloProvider>
       </body>
     </html>
   );
