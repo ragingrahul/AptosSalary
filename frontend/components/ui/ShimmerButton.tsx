@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { GiReceiveMoney } from 'react-icons/gi'
 import { PiHandDeposit } from 'react-icons/pi'
 
@@ -24,7 +24,6 @@ export const ShimmerButton = ({
               console.log('Hello');
               toggleDropdown()
             }
-              
           }}
         >
           {position === 'left' && icon}
@@ -43,7 +42,7 @@ export const ShimmerButton = ({
             <button
               className={`inline-flex h-10 w-full animate-shimmer items-center justify-around rounded-t-md border-x border-t border-slate-800 bg-black  px-6 gap-3 font-light text-sm text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-400  ${otherClasses}`}
               onClick={() => {
-                setIsOpen(false);
+                
               }}
             >
               <PiHandDeposit  />
@@ -52,7 +51,7 @@ export const ShimmerButton = ({
             <button
               className={`inline-flex h-10 w-full animate-shimmer items-center justify-around rounded-b-md border-x border-b border-slate-800 bg-black px-6 gap-3 font-light text-sm text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-400  ${otherClasses}`}
               onClick={() => {
-                setIsOpen(false);
+                
               }}
             >
               <GiReceiveMoney />
