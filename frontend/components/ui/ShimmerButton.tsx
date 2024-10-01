@@ -32,12 +32,17 @@ export const ShimmerButton = ({
             else if(title === 'Employee Login'){
               const wallet = wallets?.[0]
               dispatch(setRole('employee'))
-              if (wallet) disconnect()
+              if (wallet) connect(wallet.name)
             }
             else if(title === 'Employeer Login'){
               const wallet = wallets?.[0]
               dispatch(setRole('employer'))
               if (wallet) connect(wallet.name)
+            }
+            else if(title === 'Disconnect'){
+              dispatch(setRole('nill'))
+              const wallet = wallets?.[0]
+              if (wallet) disconnect()
             }
 
           }}

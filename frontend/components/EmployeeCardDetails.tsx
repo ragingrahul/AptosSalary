@@ -4,7 +4,7 @@ import Timeline from './ui/Timeline'
 const EmployeeCardDetails = () => {
     return (
         <div className='flex justify-center relative mt-20 mb-2 z-10'>
-            <div className='w-[650px] max-w-[89vw] md:max-w-2xl lg:max-w-[60vw] flex flex-col items-center justify-center  border border-white/[0.1] rounded-lg p-5'>
+            <div className='w-[650px] max-w-[89vw] md:max-w-2xl lg:max-w-[60vw] flex flex-col items-center justify-center  border border-white/[0.2] rounded-lg p-5'>
                 <div className='w-full flex flex-row justify-between'>
                     <h1>
                         Software Subscriptions
@@ -61,7 +61,6 @@ const EmployeeCardDetails = () => {
                         <div className="bg-blue-600 h-2.5 rounded-full w-[85%]"></div>
                     </div>
                 </div>
-                {/* <Timeline /> */}
             </div>
         </div>
     )
