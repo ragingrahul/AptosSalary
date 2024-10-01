@@ -3,7 +3,6 @@ import { Spotlight } from './ui/Spotlight'
 import { GridBackgroundDemo } from './ui/Grid'
 import { TextGenerateEffect } from './ui/TextGenerateEffect'
 import { ShimmerButton } from './ui/ShimmerButton'
-import { FaCircleArrowRight } from 'react-icons/fa6'
 import { PiHandDeposit } from 'react-icons/pi'
 import { GiReceiveMoney } from 'react-icons/gi'
 
@@ -28,7 +27,7 @@ const Hero = () => {
                     <p className='text-center md:tracking-wider mb-4 md:text-lg lg:text-xl '>
                         Transforming payroll processes for clarity and employee satisfaction!
                     </p>
-                    <div className='flex flex-row gap-6' >
+                    <div className='flex flex-col md:flex-row gap-6' >
                         <ShimmerButton
                             title='Employee Login'
                             icon={<GiReceiveMoney />}
