@@ -1,9 +1,10 @@
 import React from 'react'
+import Timeline from './ui/Timeline'
 
 const EmployeeCardDetails = () => {
     return (
-        <div className='flex justify-center relative my-20 z-10'>
-            <div className='w-[650px] max-w-[89vw] md:max-w-2xl lg:max-w-[60vw] flex flex-col items-center justify-center  border border-slate-700 rounded-lg p-5'>
+        <div className='flex justify-center relative mt-20 mb-2 z-10'>
+            <div className='w-[650px] max-w-[89vw] md:max-w-2xl lg:max-w-[60vw] flex flex-col items-center justify-center  border border-white/[0.1] rounded-lg p-5'>
                 <div className='w-full flex flex-row justify-between'>
                     <h1>
                         Software Subscriptions
@@ -12,7 +13,7 @@ const EmployeeCardDetails = () => {
                         Manage
                     </h4>
                 </div>
-                <div className='w-full flex flex-col md:flex-row justify-between items-center my-6 p-4 rounded-lg bg-black-200'>
+                <div className='w-full flex flex-col md:flex-row justify-between items-center my-6 p-4 rounded-lg bg-[#36324c9b]'>
                     <div className='flex flex-col'>
                         <div className="w-[176px] rounded-lg  bg-purple my-2" >
                             <div className="h-28 w-44 flex justify-center items-center">
@@ -60,7 +61,7 @@ const EmployeeCardDetails = () => {
                         <div className="bg-blue-600 h-2.5 rounded-full w-[85%]"></div>
                     </div>
                 </div>
-
+                {/* <Timeline /> */}
             </div>
         </div>
     )
