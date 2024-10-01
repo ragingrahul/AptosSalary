@@ -1,6 +1,6 @@
 import type { AppDispatch, RootState } from './store'
 
-export type Role = 'employee' | 'employer'
+export type Role = 'employee' | 'employer' | 'nill'
 
 export type AppState = {
   role?: Role
