@@ -17,12 +17,21 @@ const Timeline: React.FC<Props> = ({ items }) => {
                 </h1>
                 {items.map((item, index) => (
                     <div className={`relative  ${index != items.length-1 && `border-gray-700 border-s`}`}>
+                        <div className={`relative  ${index != items.length - 1 && `border-gray-700 border-s`}`}>
                         <div className="h-[100px] ms-4">
                             <div className="absolute w-4 h-4 bg-gray-200 rounded-full -start-2 border border-white dark:border-gray-900 dark:bg-yellow-500"></div>
-                            <time className="mb-1 text-lg font-semibold leading-none text-gray-900 dark:text-white ">{item.date}</time>
-                            <h3 className="text-sm font-normal text-gray-400 dark:text-gray-500 ">{item.title}</h3>
+                            <div className='flex flex-row justify-between'>
+                                <div className='flex flex-col'>
+                                    <time className="mb-1 text-lg font-semibold leading-none text-gray-900 dark:text-white ">{item.date}</time>
+                                    <h3 className="text-sm font-normal text-gray-400 dark:text-gray-500 ">{item.title}</h3>
+                                </div>
+                                <div className='flex font-bold text-lg'>
+                                    +30 APT
+                                </div>
+                            </div>
                             {/* <p className="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">{item.description}</p> */}
                         </div>
+                    </div>
                     </div>
                 ))}
             </div>
