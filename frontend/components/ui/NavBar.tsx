@@ -15,7 +15,7 @@ type Props ={
 export function Navbar(props: Props) {
     return (
         <div
-            className={cn("fixed top-3 inset-x-0 px-8 py-6 z-50 w-full flex items-center justify-center", props.className)}
+            className={cn("absolute top-3 inset-x-0 px-8 py-6 z-50 w-full flex items-center justify-center", props.className)}
         >
             <div className="flex justify-between items-center w-full">
                 <img

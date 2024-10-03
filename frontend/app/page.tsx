@@ -1,6 +1,7 @@
 "use client";
 
-import EmployeeHero from "@/components/EmployeeHero";
+import EmployeeHero from "@/components/EmployeeHero"
+import EmployerHero from "@/components/EmployerHero";
 import Footer from "@/components/Footer";
 import Grid from "@/components/Grid";
 import Hero from "@/components/Hero";
@@ -49,7 +50,7 @@ export default function Home() {
     <main className="relative bg-black-100 flex justify-center items-center flex-col overflow-hidden mx-auto sm:px-10 px-5">
       <div className="max-w-7xl w-full">
         {!connected &&
-          <>
+          <div className=" w-full">
             <Navbar
               title="Connect"
               icon={<IoIosArrowDropdown />}
@@ -58,17 +59,27 @@ export default function Home() {
             <Hero />
             <Grid />
             <Footer />
-          </>
+          </div>
         }
         {connected && role == 'employee' &&
-          <>
+          <div className=" w-full">
             <Navbar
               title='Disconnect'
               icon={<IoMdLogOut />}
               position='left'
             />
             <EmployeeHero />
-          </>
+          </div>
+        }
+        {connected && role == 'employer' &&
+          <div className="w-full">
+            <Navbar
+              title='Disconnect'
+              icon={<IoMdLogOut />}
+              position='left'
+            />
+            <EmployerHero />
+          </div>
         }
       </div>
     </main>
