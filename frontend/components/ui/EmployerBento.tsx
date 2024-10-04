@@ -54,7 +54,7 @@ export function EmployerBento() {
                         </p>
                         <div>
                             <p className="text-neutral-600 dark:text-[#f8ad5d] mt-4 text-xl font-bold relative z-20">
-                               5
+                               5 lifeless souls
                             </p>
                             <p className="text-neutral-600 dark:text-red-500 text-xs font-light relative z-20 w-full flex flex-row items-center">
                                 <IoIosTrendingDown className="mr-1" /> 0.01% less than yesterday
