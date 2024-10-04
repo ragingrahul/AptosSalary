@@ -11,7 +11,7 @@ type Props = {
 const Timeline: React.FC<Props> = ({ items }) => {
     return (
         <div className='flex justify-center relative my-2 z-10'>
-            <div className='w-[650px] max-w-[89vw] md:max-w-2xl lg:max-w-[60vw] flex flex-col border border-white/[0.2] rounded-lg p-5'>
+            <div className='w-[650px] max-w-[89vw] md:max-w-2xl lg:max-w-[60vw] flex flex-col bg-[#181522] border border-[#846b8a] rounded-lg p-5'>
                 <h1 className='text-2xl font-bold mb-4'>
                     Payment History
                 </h1>
