@@ -3,6 +3,7 @@ import { GridBackgroundDemo } from './ui/Grid'
 import { EmployerBento } from './ui/EmployerBento'
 import EmployerGraphs from './ui/EmployerGraphs'
 import { Spotlight } from './ui/Spotlight'
+import EmployerTimeline from './ui/EmployerTimeline'
 
 const EmployerHero = () => {
     return (
@@ -15,6 +16,7 @@ const EmployerHero = () => {
             <GridBackgroundDemo />
             <EmployerBento />
             <EmployerGraphs />
+            <EmployerTimeline />
         </div>
     )
 }
