@@ -62,7 +62,7 @@ export function AddOrgFunds() {
             </FormItem>
           )}
         />
-        <Button type="submit" variant="secondary">Submit</Button>
+        <Button type="submit" variant="purple">Submit</Button>
       </form>
     </Form>
   )
