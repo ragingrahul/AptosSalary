@@ -1,11 +1,14 @@
+import { useAppSelector } from "@/state/hooks";
+import { selectOrganization } from "@/state/selectors";
 import React from "react";
 import { GoHome, GoOrganization, GoPerson } from "react-icons/go";
 import { IoIosTrendingUp, IoIosTrendingDown } from "react-icons/io";
 
 export function EmployerBento() {
+    const organization = useAppSelector(selectOrganization)
     return (
         <div className="pt-20 b-5">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-10 md:gap-2 max-w-7xl mx-auto">
+            <div className="h-[180px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-10 md:gap-2 max-w-7xl mx-auto">
                 <div
                     className="relative p-6 flex flex-row jus rounded-3xl overflow-hidden border border-[#846b8a] bg-[#2a273c]"
                 >
@@ -14,7 +17,7 @@ export function EmployerBento() {
                             Organization Name
                         </p>
                         <p className="text-neutral-600 dark:text-[#f8ad5d] mt-4 text-xl font-bold relative z-20">
-                            Berkley Hathshire
+                            {organization?.orgName || "Sweet Drinks Ltd."}
                         </p>
                     </div>
                     <div className="flex justify-end w-full">
@@ -32,7 +35,7 @@ export function EmployerBento() {
                         </p>
                         <div>
                             <p className="text-neutral-600 dark:text-[#f8ad5d] mt-4 text-xl font-bold relative z-20">
-                                100 APT
+                                {(organization?.orgTreasury ?? 0)/1e8} APT
                             </p>
                             <p className="text-neutral-600 dark:text-green-500 text-xs font-light relative z-20 w-full flex flex-row items-center">
                                 <IoIosTrendingUp className="mr-1" /> 0.01% less than yesterday
@@ -54,7 +57,7 @@ export function EmployerBento() {
                         </p>
                         <div>
                             <p className="text-neutral-600 dark:text-[#f8ad5d] mt-4 text-xl font-bold relative z-20">
-                               5 lifeless souls
+                                {organization?.employees?.length || 0} lifeless souls
                             </p>
                             <p className="text-neutral-600 dark:text-red-500 text-xs font-light relative z-20 w-full flex flex-row items-center">
                                 <IoIosTrendingDown className="mr-1" /> 0.01% less than yesterday

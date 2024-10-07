@@ -4,8 +4,12 @@ import { EmployerBento } from './ui/EmployerBento'
 import EmployerGraphs from './ui/EmployerGraphs'
 import { Spotlight } from './ui/Spotlight'
 import EmployerTimeline from './ui/EmployerTimeline'
+import { Address } from '@/state/types'
 
-const EmployerHero = () => {
+type AddressProp = {
+    address: Address
+}
+const EmployerHero = ({address}:AddressProp) => {
     return (
         <div className='pb-20 pt-10 w-full h-100vh'>
             <div>
@@ -16,7 +20,7 @@ const EmployerHero = () => {
             <GridBackgroundDemo />
             <EmployerBento />
             <EmployerGraphs />
-            <EmployerTimeline />
+            <EmployerTimeline address={address}/>
         </div>
     )
 }
