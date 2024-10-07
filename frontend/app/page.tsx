@@ -71,14 +71,14 @@ export default function Home() {
             <EmployeeHero />
           </div>
         }
-        {connected && role == 'employer' &&
+        {connected && role == 'employer' && account &&
           <div className="w-full">
             <Navbar
               title='Disconnect'
               icon={<IoMdLogOut />}
               position='left'
             />
-            <EmployerHero />
+            <EmployerHero address={account.address}/>
           </div>
         }
       </div>
