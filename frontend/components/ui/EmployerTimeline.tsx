@@ -9,7 +9,7 @@ import { useQuery } from '@apollo/client'
 import { EMPLOYEE_ADDED_MOVE, ORG_ADDED_MOVE, ORG_FUNDED_MOVE } from '@/utils/graph-queries'
 import { Address } from '@/state/types'
 import moment from 'moment'
-import { getColorClass } from '@/utils/colour'
+import { getColorClass } from '@/utils/helper'
 
 export type Employee = {
     address: string
