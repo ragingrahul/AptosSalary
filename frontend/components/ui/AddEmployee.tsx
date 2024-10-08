@@ -1,3 +1,4 @@
+import { addEmployeeAPI } from "@/api/api";
 import { Button } from "@/components/ui/button"
 import {
     Dialog,
@@ -50,8 +51,14 @@ export function AddEmployee() {
       });
     
       // Handle form submission
-      function onSubmit(data: z.infer<typeof FormSchema>) {
+      async function onSubmit(data: z.infer<typeof FormSchema>) {
         const commitment = generateCommitment(data.dailySalary, data.jobTitle, data.walletAddress);
+        try {
+            const result = await addEmployeeAPI(data.walletAddress, data.jobTitle, data.dailySalary);
+            
+          } catch (error) {
+            
+          }
     
         console.log("Generated Commitment:", commitment);
       }
