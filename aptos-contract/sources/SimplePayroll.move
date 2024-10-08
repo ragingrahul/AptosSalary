@@ -8,6 +8,12 @@ module simple_salary_addr::simplepayroll{
     use aptos_framework::timestamp;
     use std::string::{String, utf8};
     use std::vector;
+    use std::debug;
+
+    use aptos_std::crypto_algebra::{Element, from_u64, multi_scalar_mul, eq, multi_pairing, upcast, pairing, add, zero, deserialize};
+    use aptos_std::bls12381_algebra::{Fr, FormatFrLsb, FormatG1Compr, FormatG2Compr, FormatFq12LscLsb, G1, G2, Gt, Fq12, FormatGt};
+
+    use simple_salary_addr::Verifier;
 
     /// Errors
     const E_NOT_INITIALIZED: u64 = 1;
@@ -26,11 +32,10 @@ module simple_salary_addr::simplepayroll{
 
     struct Employee has store, drop, copy {
         employee_account: address,
-        employee_name: String,
+        employee_commitment: String,
         company_account: address,
         daily_salary: u64,
         last_payed: u64,
-        activity: String,
     }
 
     struct PayrollStorage has key {
@@ -60,11 +65,10 @@ module simple_salary_addr::simplepayroll{
     //#[event]
     struct EmployeeAddedEvent has drop, store {
         employee_account: address,
-        employee_name: String,
+        employee_commitment: String,
         company_account: address,
         daily_salary: u64,
         last_payed: u64,
-        activity: String,
         timestamp: u64
     }
 
@@ -143,10 +147,9 @@ module simple_salary_addr::simplepayroll{
      public entry fun add_employee(
         company_account: &signer,
         employee_account: address,
-        employee_name: String,
+        employee_commitment: String,
         owner: address,
         daily_salary: u64,
-        activity: String,
     ) acquires PayrollStorage {
         let company_addr = signer::address_of(company_account);
         let storage = borrow_global_mut<PayrollStorage>(owner);
@@ -154,11 +157,10 @@ module simple_salary_addr::simplepayroll{
         
         let employee = Employee {
             employee_account: employee_account,
-            employee_name: employee_name,
+            employee_commitment: employee_commitment,
             company_account: company_addr,
             daily_salary: daily_salary,
             last_payed: timestamp::now_seconds(),
-            activity: activity,
         };
         table::add(&mut storage.employees, employee_account, employee);
         let org = table::borrow_mut(&mut storage.organizations, company_addr);
@@ -167,10 +169,9 @@ module simple_salary_addr::simplepayroll{
         let event = EmployeeAddedEvent{
             employee_account: employee_account,
             company_account: company_addr,
-            employee_name: employee_name,
+            employee_commitment: employee_commitment,
             daily_salary: daily_salary,
             last_payed: timestamp::now_seconds(),
-            activity: activity,
             timestamp: timestamp::now_seconds()
         };
         event::emit_event<EmployeeAddedEvent>(
@@ -207,21 +208,68 @@ module simple_salary_addr::simplepayroll{
                 event,
         );
     }
+     public fun verify_proof<G1,G2,Gt,S>(
+        vk_alpha_g1: &Element<G1>,
+        vk_beta_g2: &Element<G2>,
+        vk_gamma_g2: &Element<G2>,
+        vk_delta_g2: &Element<G2>,
+        vk_uvw_gamma_g1: &vector<Element<G1>>,
+        public_inputs: &vector<Element<S>>,
+        proof_a: &Element<G1>,
+        proof_b: &Element<G2>,
+        proof_c: &Element<G1>,
+    ): bool {
+        let left = pairing<G1,G2,Gt>(proof_a, proof_b);
+        let scalars = vector[from_u64<S>(1)];
+        std::vector::append(&mut scalars, *public_inputs);
+        let right = zero<Gt>();
+        let right = add(&right, &pairing<G1,G2,Gt>(vk_alpha_g1, vk_beta_g2));
+        let right = add(&right, &pairing(&multi_scalar_mul(vk_uvw_gamma_g1, &scalars), vk_gamma_g2));
+        let right = add(&right, &pairing(proof_c, vk_delta_g2));
+        debug::print(&left);
+        debug::print(&right);
+        eq(&left, &right)
+    }
 
-    public entry fun verify_employee(employee_account: address, owner: address,) acquires PayrollStorage {
-        let storage = borrow_global_mut<PayrollStorage>(owner);
-        assert!(table::contains(&storage.employees, employee_account), E_EMPLOYEE_NOT_FOUND);
+
+    public entry fun verify_employee(
+        vk_alpha_g1_in: vector<u8>,
+        vk_beta_g2_in: vector<u8>,
+        vk_gamma_g2_in: vector<u8>,
+        vk_delta_g2_in: vector<u8>,
+        vk_uvw_gamma_g1_in: vector<vector<u8>>,
+        public_inputs_in: vector<vector<u8>>,
+        proof_a_in: vector<u8>,
+        proof_b_in: vector<u8>,
+        proof_c_in: vector<u8>,
+    ) {
+        let vk_alpha_g1 = std::option::extract(&mut deserialize<G1, FormatG1Compr>(&vk_alpha_g1_in));
+        let vk_beta_g2 = std::option::extract(&mut deserialize<G2, FormatG2Compr>(&vk_beta_g2_in));
+        let vk_gamma_g2 = std::option::extract(&mut deserialize<G2, FormatG2Compr>(&vk_gamma_g2_in));
+        let vk_delta_g2 = std::option::extract(&mut deserialize<G2, FormatG2Compr>(&vk_delta_g2_in));
+        let vk_gamma_abc_g1: vector<Element<G1>> = vector[
+            std::option::extract(&mut deserialize<G1, FormatG1Compr>(vector::borrow(&vk_uvw_gamma_g1_in, 0))),
+            std::option::extract(&mut deserialize<G1, FormatG1Compr>(vector::borrow(&vk_uvw_gamma_g1_in, 1))),
+        ];
+        let public_inputs: vector<Element<Fr>> =vector[
+            std::option::extract(&mut deserialize<Fr, FormatFrLsb>(vector::borrow(&public_inputs_in, 0))),
+        ];
+        let proof_a = std::option::extract(&mut deserialize<G1, FormatG1Compr>(&proof_a_in));
+        let proof_b = std::option::extract(&mut deserialize<G2, FormatG2Compr>(&proof_b_in));
+        let proof_c = std::option::extract(&mut deserialize<G1, FormatG1Compr>(&proof_c_in));
+
         
-        let employee = table::borrow_mut(&mut storage.employees, employee_account);
-
-        let event = EmployeeVerifiedEvent{
-            employee_account: employee_account,
-            timestamp: timestamp::now_seconds()
-        };
-        event::emit_event<EmployeeVerifiedEvent>(
-                &mut storage.empl_verified_event,
-                event,
-        );
+        assert!(verify_proof<G1, G2, Gt, Fr>(
+            &vk_alpha_g1,
+            &vk_beta_g2,
+            &vk_gamma_g2,
+            &vk_delta_g2,
+            &vk_gamma_abc_g1,
+            &public_inputs,
+            &proof_a,
+            &proof_b,
+            &proof_c,
+        ),1);
     }
 
     #[view]
@@ -234,12 +282,12 @@ module simple_salary_addr::simplepayroll{
     }
 
     #[view]
-    public fun get_employee(employee_address: address, owner: address): (address,address,u64,u64,String) acquires PayrollStorage {
+    public fun get_employee(employee_address: address, owner: address): (address,String,address,u64,u64) acquires PayrollStorage {
         let storage = borrow_global<PayrollStorage>(owner);
         assert!(table::contains(&storage.employees, employee_address), E_EMPLOYEE_NOT_FOUND);
         let employee = table::borrow(&storage.employees, employee_address);
         
-        (employee.employee_account,employee.company_account,employee.daily_salary,employee.last_payed,employee.activity)
+        (employee.employee_account,employee.employee_commitment,employee.company_account,employee.daily_salary,employee.last_payed)
     }
 
     #[view]
