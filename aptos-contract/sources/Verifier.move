@@ -3,7 +3,7 @@ module simple_salary_addr::Verifier{
     use std::vector;
     use std::debug;
 
-    // friend football_fund_addr::PredictGame;
+    friend simple_salary_addr::simplepayroll;
     
     public fun verify_proof<G1,G2,Gt,S>(
         vk_alpha_g1: &Element<G1>,
