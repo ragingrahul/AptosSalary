@@ -1,3 +1,4 @@
+use std::borrow::Borrow;
 use std::env;
 use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
@@ -49,7 +50,12 @@ struct User {
 //const DB_URL: String = env::var("DATABASE_URL").expect("Your must set DATABASE_URL environment variable");
 
 //constants
-const OK_RESPONSE: &str = "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\n";
+const OK_RESPONSE: &str = "HTTP/1.1 200 OK\r\nAccess-Control-Allow-Origin: *\r\nContent-Type: application/json\r\n\r\n";
+const OPTIONS_RESPONSE: &str = "HTTP/1.1 204 No Content\r\n\
+    Access-Control-Allow-Origin: *\r\n\
+    Access-Control-Allow-Methods: POST, GET, OPTIONS, DELETE\r\n\
+    Access-Control-Allow-Headers: Content-Type\r\n\
+    Access-Control-Max-Age: 86400\r\n\r\n";
 const NOT_FOUND: &str = "HTTP/1.1 404 Not Found\r\n\r\n";
 const INTERNAL_SERVER_ERROR: &str = "HTTP/1.1 500 INTERNAL SERVER ERROR\r\n\r\n";
 
@@ -90,6 +96,13 @@ async fn handle_client(client: &Client, mut stream: TcpStream) {
     match stream.read(&mut buffer) {
         Ok(size) => {
             request.push_str(String::from_utf8_lossy(&buffer[..size]).as_ref());
+
+            if request.starts_with("OPTIONS") {
+                // Handle preflight request for CORS
+                stream.write_all(OPTIONS_RESPONSE.as_bytes()).unwrap();
+                stream.flush().unwrap();
+                return;
+            }
 
             let (status_line, content) = match &*request {
                 r if r.starts_with("POST /users") => handle_post_request(&client, r).await,
@@ -316,7 +329,7 @@ fn groth16_verify(input: &str) -> String {
     println!("{:?},{:?}", inputs_bytes,inputs);
 
 
-    let vk_serialized = format!("{:?},{:?},{:?}", vk, proof, vec_string(&inputs_bytes));
+    let vk_serialized = format!("{:?},{:?},{:?}", vk, proof, inputs_bytes);
 
     vk_serialized
 }
