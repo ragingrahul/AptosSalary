@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { DataTableDemo } from './EmployeeTable'
 import { AddOrgFunds } from '../AddOrgFunds'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './dropdown-menu'
@@ -7,41 +7,50 @@ import { CheckIcon, DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { ColumnDef } from '@tanstack/react-table'
 import { RxCross2 } from 'react-icons/rx'
 import { AddEmployee } from './AddEmployee'
+import { useAppDispatch, useAppSelector } from '@/state/hooks'
+import { selectOrganization } from '@/state/selectors'
+import { useQuery } from '@apollo/client'
+import { GET_EMPLOYEE_MOVE } from '@/utils/graph-queries'
+import { Address } from '@/state/types'
+import { setOrganization } from '@/state/app'
+import { getUserByAddress } from '@/api/api'
+import { formatAddress } from '@/utils/helper'
 export type Employee = {
     address: string
     employeeName: string
+    orgAddress: string
     verified: boolean
     salary: number
     activity: string
     daysWorked: number
 }
 
-const data: Employee[] = [
-    {
-        address: "Ox583dbjsb9",
-        employeeName: "Rahul",
-        verified: false,
-        salary: 10,
-        activity: "Developer",
-        daysWorked: 1,
-    },
-    {
-        address: "Ox583dbjsb9",
-        employeeName: "Rahul",
-        verified: false,
-        salary: 10,
-        activity: "Developer",
-        daysWorked: 1,
-    },
-    {
-        address: "Ox583dbjsb9",
-        employeeName: "Rahul",
-        verified: false,
-        salary: 10,
-        activity: "Developer",
-        daysWorked: 1,
-    }
-]
+// const data: Employee[] = [
+//     {
+//         address: "Ox583dbjsb9",
+//         employeeName: "Rahul",
+//         verified: false,
+//         salary: 10,
+//         activity: "Developer",
+//         daysWorked: 1,
+//     },
+//     {
+//         address: "Ox583dbjsb9",
+//         employeeName: "Rahul",
+//         verified: false,
+//         salary: 10,
+//         activity: "Developer",
+//         daysWorked: 1,
+//     },
+//     {
+//         address: "Ox583dbjsb9",
+//         employeeName: "Rahul",
+//         verified: false,
+//         salary: 10,
+//         activity: "Developer",
+//         daysWorked: 1,
+//     }
+// ]
 
 export const columns: ColumnDef<Employee>[] = [
 
@@ -138,7 +147,75 @@ export const columns: ColumnDef<Employee>[] = [
     },
 ]
 
-const EmployerGraphs = () => {
+type AddressProp = {
+    address: Address
+}
+
+const EmployerGraphs = ({address}:AddressProp) => {
+    const [employees,setEmployees] = useState<Employee[]>()
+    const dispatch = useAppDispatch()
+    const org = useAppSelector(selectOrganization)
+
+    const { data } = useQuery(GET_EMPLOYEE_MOVE, {
+        variables: {
+          companyAccount: address,
+          accountAddress: address,
+        },
+    })
+
+    useEffect(() => {
+        const fetchData = async () =>{
+            if (org && data) {
+                const fetchAllEmployeeData = async (): Promise<Employee[]> => {
+                    const employees = await Promise.all(
+                        data.events.map(async (item: any) => {
+                            const employeeDetails = await getUserByAddress(item.employee_account);
+                
+                            return {
+                                address: formatAddress(item.employee_account),
+                                employeeName: employeeDetails.name,
+                                orgAddress: formatAddress(item.company_account),
+                                activity: employeeDetails.job_title,
+                                salary: Number(item.daily_salary)/10e8,
+                                verified: false,
+                                daysWorked: Math.floor((Date.now()-item.timestamp*1000)/(24*1000 * 60 * 60)),
+                            };
+                        })
+                    )
+                    return employees;
+                }
+            //   const employees = data.events.map(
+            //     (employee: {
+            //       timestamp: any
+            //       employeeName:any
+            //       activity: any
+            //       company_account: any
+            //       daily_salary: any
+            //       employee_account: any
+            //       verified: any
+            //       daysWorked: any
+            //     }) => ({
+            //       address: employee.employee_account,
+            //       employeeName: employee.employeeName,
+            //       orgAddress: employee.company_account,
+            //       activity: employee.activity,
+            //       salary: Number(employee.daily_salary),
+            //       verified: false,
+            //       daysWorked: Math.floor((Date.now()-employee.timestamp*1000)/(24*1000 * 60 * 60)),
+            //     }),
+            //   )
+            const employees = await fetchAllEmployeeData()
+            setEmployees(employees)
+            console.log(employees)
+            dispatch(setOrganization({ ...org, employees }))
+            }
+        }
+
+        fetchData()
+        console.log(data)
+        //console.log(employeesAdded)
+    }, [data, dispatch])
+
     return (
         <div className="py-5">
             <div className="grid grid-cols-3 gap-10 md:gap-2 max-w-7xl mx-auto">
@@ -149,8 +226,9 @@ const EmployerGraphs = () => {
                         <span className='text-2xl font-bold text-[#9477c0]'>Employees</span>
                         {/* <Button type="submit" variant="purple" className='bg-[#9477c0a0]'>Add Employee</Button> */}
                         <AddEmployee />
-                    </div>
-                    <DataTableDemo data={data} columns={columns}/>
+                    </div> 
+                    {employees && <DataTableDemo data={employees} columns={columns}/>}
+                    
                 </div>
                 <div
                     className="relative p-6 rounded-3xl overflow-hidden border border-[#846b8a] bg-[#181522] col-span-1"

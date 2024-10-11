@@ -29,8 +29,6 @@ export const GET_EMPLOYEE_MOVE = gql`
       }
     ) {
       id: sequence_number
-      employeeName: data(path: "employee_name")
-      activity: data(path: "activity")
       company_account: data(path: "company_account")
       daily_salary: data(path: "daily_salary")
       employee_account: data(path: "employee_account")
