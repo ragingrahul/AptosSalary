@@ -18,7 +18,10 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input"
+import { addEmployeeMove } from "@/services/write-services";
 import { generateCommitment } from "@/utils/helper";
+import { Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk";
+import { InputTransactionData, useWallet } from "@aptos-labs/wallet-adapter-react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -34,34 +37,36 @@ const FormSchema = z.object({
     jobTitle: z.string().min(2, {
       message: "Job Title must be at least 2 characters.",
     }),
-    dailySalary: z.string().min(1, {
-      message: "Daily Salary is required.",
+    dailySalary: z.number({
+        invalid_type_error: "Daily Salary must be a number.",
+    }).min(1, {
+        message: "Daily Salary must be at least 1.",
     }),
-  });
+});
 
 export function AddEmployee() {
+    const { account, signAndSubmitTransaction } = useWallet()
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
           employeeName: "",
           walletAddress: "",
           jobTitle: "",
-          dailySalary: "",
+          dailySalary: 1,
         },
       });
     
       // Handle form submission
       async function onSubmit(data: z.infer<typeof FormSchema>) {
-        const commitment = generateCommitment(data.dailySalary, data.jobTitle, data.walletAddress);
+        const commitment = generateCommitment(data.employeeName, data.jobTitle, data.walletAddress);
         try {
-            const result = await addEmployeeAPI(data.walletAddress, data.jobTitle, data.dailySalary);
-            
+            const result = await addEmployeeAPI(data.employeeName, data.jobTitle, data.walletAddress);
+            const response= await addEmployeeMove(data.walletAddress,commitment,data.dailySalary,signAndSubmitTransaction);
+            console.log(response.hash,result)
           } catch (error) {
-            
+            console.error(error)
           }
-    
-        console.log("Generated Commitment:", commitment);
-      }
+        }
 
     return (
         <Dialog>
@@ -141,3 +146,7 @@ export function AddEmployee() {
         </Dialog>
     )
 }
+function signAndSubmitTransaction(rawTxn: InputTransactionData) {
+    throw new Error("Function not implemented.");
+}
+

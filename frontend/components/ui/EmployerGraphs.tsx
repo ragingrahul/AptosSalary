@@ -90,7 +90,7 @@ export const columns: ColumnDef<Employee>[] = [
             //     currency: "APT",
             // }).format(amount)
 
-            return <div className="text-center font-medium">{amount}</div>
+            return <div className="text-center font-medium">{amount} APT</div>
         },
     },
     {

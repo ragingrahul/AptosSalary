@@ -1,12 +1,13 @@
-export async function addEmployeeAPI(walletAddress: string, jobTitle: string, dailySalary: string) {
+export async function addEmployeeAPI(name: string, jobTitle: string, walletAddress: string) {
     try {
       const response = await fetch("http://localhost:8080/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        mode:'cors',
         body: JSON.stringify({
-          name: walletAddress, // Assuming name is walletAddress
+          name: name,
           job_title: jobTitle,
           address: walletAddress,
         }),
@@ -16,8 +17,8 @@ export async function addEmployeeAPI(walletAddress: string, jobTitle: string, da
         throw new Error("Failed to add employee.");
       }
   
-      const result = await response.json();
-      return result;
+      //const result = await response.json();
+      return response;
     } catch (error) {
       console.error("Error adding employee:", error);
       throw new Error("An unexpected error occurred.");
