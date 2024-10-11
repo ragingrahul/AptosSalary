@@ -19,7 +19,7 @@ const EmployerHero = ({address}:AddressProp) => {
             </div>
             <GridBackgroundDemo />
             <EmployerBento />
-            <EmployerGraphs />
+            <EmployerGraphs address={address}/>
             <EmployerTimeline address={address}/>
         </div>
     )

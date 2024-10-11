@@ -26,3 +26,10 @@ export function generateCommitment(name: string, jobTitle: string, address: stri
     const inputCommitment = `${name}${jobTitle}${address}`;
     return generateSha256Hash(inputCommitment);
 }
+
+export function formatAddress(address: string, prefixLength = 6, suffixLength = 4): string {
+  if (address.length <= prefixLength + suffixLength) {
+      return address;
+  }
+  return `${address.slice(0, prefixLength)}...${address.slice(-suffixLength)}`;
+}
