@@ -15,6 +15,9 @@ import { Address } from '@/state/types'
 import { setOrganization } from '@/state/app'
 import { getUserByAddress } from '@/api/api'
 import { formatAddress } from '@/utils/helper'
+import { IoCardSharp } from 'react-icons/io5'
+import { paySalaryMove } from '@/services/write-services'
+import { useWallet } from '@aptos-labs/wallet-adapter-react'
 export type Employee = {
     address: string
     employeeName: string
@@ -25,136 +28,110 @@ export type Employee = {
     daysWorked: number
 }
 
-// const data: Employee[] = [
-//     {
-//         address: "Ox583dbjsb9",
-//         employeeName: "Rahul",
-//         verified: false,
-//         salary: 10,
-//         activity: "Developer",
-//         daysWorked: 1,
-//     },
-//     {
-//         address: "Ox583dbjsb9",
-//         employeeName: "Rahul",
-//         verified: false,
-//         salary: 10,
-//         activity: "Developer",
-//         daysWorked: 1,
-//     },
-//     {
-//         address: "Ox583dbjsb9",
-//         employeeName: "Rahul",
-//         verified: false,
-//         salary: 10,
-//         activity: "Developer",
-//         daysWorked: 1,
-//     }
-// ]
-
-export const columns: ColumnDef<Employee>[] = [
-
-    {
-        accessorKey: "address",
-        header: "Address",
-        cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("address")}</div>
-        ),
-    },
-    {
-        accessorKey: "employeeName",
-        header: "Name",
-        cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("employeeName")}</div>
-        ),
-    },
-    {
-        accessorKey: "verified",
-        header: "Verified",
-        cell: ({ row }) => {
-            const verified = row.getValue("verified") as boolean
-            return (
-                <div className="flex">
-                    {verified ? (
-                        <CheckIcon className="h-5 w-5 text-green-500" />
-                    ) : (
-                        <RxCross2 className="h-5 w-5 text-red-500" />
-                    )}
-                    <span className="ml-2 capitalize">
-                        {verified ? "Yes" : "No"}
-                    </span>
-                </div>
-            )
-        },
-    },
-    {
-        accessorKey: "salary",
-        header: () => <div className="text-center">Salary</div>,
-        cell: ({ row }) => {
-            const amount = parseFloat(row.getValue("salary"))
-
-            // Format the amount as a dollar amount
-            // const formatted = new Intl.NumberFormat("en-US", {
-            //     style: "currency",
-            //     currency: "APT",
-            // }).format(amount)
-
-            return <div className="text-center font-medium">{amount} APT</div>
-        },
-    },
-    {
-        accessorKey: "activity",
-        header: () => <div className="text-center">Activity</div>,
-        cell: ({ row }) => (
-            <div className="capitalize text-center">{row.getValue("activity")}</div>
-        ),
-    },
-    {
-        accessorKey: "daysWorked",
-        header: () => <div className="text-center">Days Worked</div>,
-        cell: ({ row }) => (
-            <div className="capitalize text-center">{row.getValue("daysWorked")}</div>
-        ),
-    },
-    {
-        id: "actions",
-        enableHiding: false,
-        cell: ({ row }) => {
-            const employee = row.original
-
-            return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <DotsHorizontalIcon className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(employee.address)}
-                        >
-                            Copy employee ID
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>View customer</DropdownMenuItem>
-                        <DropdownMenuItem>View employee details</DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            )
-        },
-    },
-]
 
 type AddressProp = {
     address: Address
 }
 
 const EmployerGraphs = ({address}:AddressProp) => {
+    const { signAndSubmitTransaction } = useWallet()
     const [employees,setEmployees] = useState<Employee[]>()
     const dispatch = useAppDispatch()
     const org = useAppSelector(selectOrganization)
+
+    const columns: ColumnDef<Employee>[] = [
+
+        {
+            accessorKey: "address",
+            header: "Address",
+            cell: ({ row }) => (
+                <div className="capitalize">{formatAddress(row.getValue("address"))}</div>
+            ),
+        },
+        {
+            accessorKey: "employeeName",
+            header: "Name",
+            cell: ({ row }) => (
+                <div className="capitalize">{row.getValue("employeeName")}</div>
+            ),
+        },
+        {
+            accessorKey: "verified",
+            header: "Verified",
+            cell: ({ row }) => {
+                const verified = row.getValue("verified") as boolean
+                return (
+                    <div className="flex">
+                        {verified ? (
+                            <CheckIcon className="h-5 w-5 text-green-500" />
+                        ) : (
+                            <RxCross2 className="h-5 w-5 text-red-500" />
+                        )}
+                        <span className="ml-2 capitalize">
+                            {verified ? "Yes" : "No"}
+                        </span>
+                    </div>
+                )
+            },
+        },
+        {
+            accessorKey: "salary",
+            header: () => <div className="text-center">Salary</div>,
+            cell: ({ row }) => {
+                const amount = parseFloat(row.getValue("salary"))
+    
+                return <div className="text-center font-medium">{amount} APT</div>
+            },
+        },
+        {
+            accessorKey: "activity",
+            header: () => <div className="text-center">Activity</div>,
+            cell: ({ row }) => (
+                <div className="capitalize text-center">{row.getValue("activity")}</div>
+            ),
+        },
+        {
+            accessorKey: "daysWorked",
+            header: () => <div className="text-center">Days Worked</div>,
+            cell: ({ row }) => (
+                <div className="capitalize text-center">{row.getValue("daysWorked")}</div>
+            ),
+        },
+        {
+            id: "actions",
+            enableHiding: false,
+            cell: ({ row }) => {
+                const address = row.original.address;
+    
+                return (
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Open menu</span>
+                                <DotsHorizontalIcon className="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                                className='gap-2'
+                                onClick={async () => {
+                                    try {
+                                      const tx = await paySalaryMove(address,signAndSubmitTransaction)
+                                      console.log(tx)
+                                    } catch (error) {
+                                      console.error(error)
+                                    }
+                                  }}
+                            >
+                             <IoCardSharp />   Pay Your Employee
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                )
+            },
+        },
+    ]
+    
 
     const { data } = useQuery(GET_EMPLOYEE_MOVE, {
         variables: {
@@ -172,11 +149,11 @@ const EmployerGraphs = ({address}:AddressProp) => {
                             const employeeDetails = await getUserByAddress(item.employee_account);
                 
                             return {
-                                address: formatAddress(item.employee_account),
+                                address: item.employee_account,
                                 employeeName: employeeDetails.name,
-                                orgAddress: formatAddress(item.company_account),
+                                orgAddress: item.company_account,
                                 activity: employeeDetails.job_title,
-                                salary: Number(item.daily_salary)/10e8,
+                                salary: Number(item.daily_salary)/10e7,
                                 verified: false,
                                 daysWorked: Math.floor((Date.now()-item.timestamp*1000)/(24*1000 * 60 * 60)),
                             };
@@ -184,26 +161,6 @@ const EmployerGraphs = ({address}:AddressProp) => {
                     )
                     return employees;
                 }
-            //   const employees = data.events.map(
-            //     (employee: {
-            //       timestamp: any
-            //       employeeName:any
-            //       activity: any
-            //       company_account: any
-            //       daily_salary: any
-            //       employee_account: any
-            //       verified: any
-            //       daysWorked: any
-            //     }) => ({
-            //       address: employee.employee_account,
-            //       employeeName: employee.employeeName,
-            //       orgAddress: employee.company_account,
-            //       activity: employee.activity,
-            //       salary: Number(employee.daily_salary),
-            //       verified: false,
-            //       daysWorked: Math.floor((Date.now()-employee.timestamp*1000)/(24*1000 * 60 * 60)),
-            //     }),
-            //   )
             const employees = await fetchAllEmployeeData()
             setEmployees(employees)
             console.log(employees)
@@ -213,7 +170,6 @@ const EmployerGraphs = ({address}:AddressProp) => {
 
         fetchData()
         console.log(data)
-        //console.log(employeesAdded)
     }, [data, dispatch])
 
     return (
@@ -224,7 +180,6 @@ const EmployerGraphs = ({address}:AddressProp) => {
                 >
                     <div className='w-full flex justify-between items-center mb-2'>
                         <span className='text-2xl font-bold text-[#9477c0]'>Employees</span>
-                        {/* <Button type="submit" variant="purple" className='bg-[#9477c0a0]'>Add Employee</Button> */}
                         <AddEmployee />
                     </div> 
                     {employees && <DataTableDemo data={employees} columns={columns}/>}
@@ -235,11 +190,6 @@ const EmployerGraphs = ({address}:AddressProp) => {
                 >
                    <AddOrgFunds />
                 </div>
-                {/* <div
-                    className="relative p-6 my-3 rounded-3xl overflow-hidden border border-[#846b8a] bg-[#181522] col-span-3"
-                >
-                   <DataTableDemo data={data} columns={columns}/>
-                </div> */}
             </div>
         </div>
     )
