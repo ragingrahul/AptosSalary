@@ -4,7 +4,7 @@ version = "1.0.0"
 authors = []
 
 [addresses]
-simple_salary_addr='0x5fb93bacc36172ad190451674928432e1b829ed7bb8230777f1aeb7eefd03357'
+simple_salary_addr='_'
 
 [dev-addresses]
 
