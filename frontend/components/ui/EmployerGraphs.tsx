@@ -188,7 +188,7 @@ const EmployerGraphs = ({address}:AddressProp) => {
                 <div
                     className="relative p-6 rounded-3xl overflow-hidden border border-[#846b8a] bg-[#181522] col-span-1"
                 >
-                   <AddOrgFunds />
+                   <AddOrgFunds orgName={org?.orgName}/>
                 </div>
             </div>
         </div>
