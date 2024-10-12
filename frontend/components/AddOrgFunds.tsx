@@ -16,30 +16,34 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { fundTreasuryMove } from "@/services/write-services"
+import { useWallet } from "@aptos-labs/wallet-adapter-react"
 
 const FormSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
+  amount: z.coerce.number({
+    invalid_type_error: "Amount must be a number.",
+  }).min(1, {
+    message: "Amount must be at least 1.",
   }),
 })
 
-export function AddOrgFunds() {
+type OrgProp = {
+  orgName: string | undefined
+}
+
+export function AddOrgFunds({orgName}:OrgProp) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-    defaultValues: {
-      username: "",
-    },
   })
+  const { signAndSubmitTransaction } = useWallet()
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    // toast({
-    //   title: "You submitted the following values:",
-    //   description: (
-    //     <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-    //       <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-    //     </pre>
-    //   ),
-    // })
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    try {
+      const tx = await fundTreasuryMove(data.amount*10e7,signAndSubmitTransaction)
+      console.log(tx)
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   return (
@@ -47,10 +51,10 @@ export function AddOrgFunds() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex flex-col justify-center space-y-4">
         <FormField
           control={form.control}
-          name="username"
+          name="amount"
           render={({ field }) => (
             <FormItem>
-              <FormDescription className="text-2xl font-bold dark:text-white mb-7">Org: <span className="text-purple">Berkley Hathshire</span></FormDescription>
+              <FormDescription className="text-2xl font-bold dark:text-white mb-7">Org: <span className="text-purple">{orgName}</span></FormDescription>
               <FormLabel className="text-lg">Add fund to treasury</FormLabel>
               <FormControl>
                 <Input placeholder="Amount" {...field} />
