@@ -232,7 +232,7 @@ async fn handle_verify_request(client: &Client, request: &str) -> (String, Strin
                     let commitment = generate_sha256_hash(&input_commitment);
                     let vk_serialized = groth16_verify(&commitment);
                     let concat_commitment = format!("Employer {{input: \"{}\"}}", commitment);
-                    let vk_input_serialized =format!("{:?},{:?}",vk_serialized,concat_commitment);
+                    let vk_input_serialized =format!("{:?}",vk_serialized);
                     (OK_RESPONSE.to_string(), vk_input_serialized)
                 }
                 Ok(None) => (NOT_FOUND.to_string(), "No result".to_string()),
