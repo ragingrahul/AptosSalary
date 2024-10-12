@@ -4,7 +4,6 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Button } from './button'
 import { CheckIcon, DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { ColumnDef } from '@tanstack/react-table'
-import { RxCross2 } from 'react-icons/rx'
 import { useQuery } from '@apollo/client'
 import { EMPLOYEE_ADDED_MOVE, ORG_ADDED_MOVE, ORG_FUNDED_MOVE } from '@/utils/graph-queries'
 import { Address } from '@/state/types'
@@ -90,15 +89,11 @@ export const columns: ColumnDef<Event>[] = [
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(event.transactionId)}
+                            onClick={() => window.open(`https://explorer.aptoslabs.com/txn/${event.transactionId}?network=testnet`, '_blank')}
                         >
-                            Copy event ID
+                            Show Transaction
                         </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>View customer</DropdownMenuItem>
-                        <DropdownMenuItem>View event details</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             )
