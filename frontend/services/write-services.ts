@@ -106,9 +106,6 @@ export async function verifyEmployee() {
               ],
           }
       }
-      //const pendingTxn = await signAndSubmitTransaction(rawTxn);
-      // const response = await aptos.waitForTransaction({ transactionHash: pendingTxn.hash });
-      // console.log(response)
   } else {
       console.log("Alpha is null or undefined");
   }
@@ -131,14 +128,19 @@ export async function paySalaryMove(
   return response
 }
 
-// export async function paySalary(address: Address) {
-//   const result = await writeContract(config, {
-//     chainId: baseSepolia.id,
-//     abi: payrollAbi,
-//     functionName: 'payout',
-//     args: [address],
-//     address: PAYROLL_CONTRACT_ADDRESS,
-//   })
-//   console.log('payout to employee', result)
-//   return result
-// }
+export async function fundTreasuryMove(
+  amount: number,
+  signAndSubmitTransaction: (transaction: InputTransactionData) => Promise<{ hash: string }>
+) {
+  const aptosConfig = new AptosConfig({ network: Network.TESTNET });
+  const aptos = new Aptos(aptosConfig);
+  const rawTxn: InputTransactionData = {
+    data: {
+      function: `${process.env.NEXT_PUBLIC_MODULE_ADDRESS}::simplepayroll::fund_organization_treasury`,
+      functionArguments: [process.env.NEXT_PUBLIC_CONTRACT_OWNER,amount],
+    }
+  }
+  const pendingTxn = await signAndSubmitTransaction(rawTxn);
+  const response = await aptos.waitForTransaction({ transactionHash: pendingTxn.hash });
+  return response
+}
