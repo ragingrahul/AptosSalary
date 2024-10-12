@@ -1,4 +1,4 @@
-import { addEmployeeAPI } from "@/api/api";
+import { addEmployeeAPI, verifyUserCommitment } from "@/api/api";
 import { Button } from "@/components/ui/button"
 import {
     Dialog,
@@ -18,7 +18,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input"
-import { addEmployeeMove } from "@/services/write-services";
+import { verifyEmployee } from "@/services/write-services";
 import { generateCommitment } from "@/utils/helper";
 import { Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk";
 import { InputTransactionData, useWallet } from "@aptos-labs/wallet-adapter-react";
@@ -44,8 +44,8 @@ const FormSchema = z.object({
     }),
 });
 
-export function AddEmployee() {
-    const { account, signAndSubmitTransaction } = useWallet()
+export function VerifyEmployee() {
+    const { account,signAndSubmitTransaction } = useWallet()
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
@@ -60,9 +60,12 @@ export function AddEmployee() {
       async function onSubmit(data: z.infer<typeof FormSchema>) {
         const commitment = generateCommitment(data.employeeName, data.jobTitle, data.walletAddress);
         try {
-            const result = await addEmployeeAPI(data.employeeName, data.jobTitle, data.walletAddress);
-            const response= await addEmployeeMove(data.walletAddress,commitment,data.dailySalary,signAndSubmitTransaction);
-            console.log(response.hash,result)
+            if(account){
+                const result = await verifyUserCommitment(account?.address)
+                console.log(result)
+                const response = await verifyEmployee(result,signAndSubmitTransaction)
+                console.log(response)
+            }
           } catch (error) {
             console.error(error)
           }
@@ -71,13 +74,13 @@ export function AddEmployee() {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button variant="purple">Add Employee</Button>
+                <Button variant="purple">Verify Employee</Button>
             </DialogTrigger>
             <DialogContent className="w-[900px] ">
                 <DialogHeader>
-                    <DialogTitle className="text-purple">New Employee</DialogTitle>
+                    <DialogTitle className="text-purple">Verify Employee</DialogTitle>
                     <DialogDescription>
-                        After adding an employee, they must perform a Zero Knowledge Proof Verification before receiving payments.
+                       After performing the ZK verification, your employer will me able to make the salary payments.
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -90,20 +93,6 @@ export function AddEmployee() {
                                 <FormItem>
                                     <FormControl>
                                         <Input placeholder="Employee Name" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        {/* Wallet Address Input */}
-                        <FormField
-                            control={form.control}
-                            name="walletAddress"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormControl>
-                                        <Input placeholder="Wallet Address" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -124,14 +113,14 @@ export function AddEmployee() {
                             )}
                         />
 
-                        {/* Daily Salary Input */}
+                        {/* Wallet Address Input */}
                         <FormField
                             control={form.control}
-                            name="dailySalary"
+                            name="walletAddress"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormControl>
-                                        <Input placeholder="Daily Dalary" {...field} />
+                                        <Input placeholder="Wallet Address" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

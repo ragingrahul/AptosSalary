@@ -74,8 +74,12 @@ export async function verifyUserCommitment(address: string) {
         throw new Error(`Failed to verify user with address: ${address}`);
       }
   
-      const result = await response.json();
-      return result; // Return the verification result, VK, and inputs
+      let result = await response.text();
+      if (result.startsWith('"') && result.endsWith('"')) {
+        result = result.slice(1, -1);
+      }
+      result = result.replace(/\\+/g, '');
+      return result; 
     } catch (error) {
       console.error("Error verifying user commitment:", error);
       throw error;

@@ -1,3 +1,4 @@
+import { getUserByAddress } from "@/api/api";
 import { Address, Employee, Organization } from "@/state/types";
 import {Aptos, AptosConfig, InputViewFunctionData, Network} from "@aptos-labs/ts-sdk";
 
@@ -25,12 +26,15 @@ export async function fetchEmployeesMove(orgAddress: Address){
     const result = await aptos.view({
       payload
     });
+    const employeeDetails = await getUserByAddress(employeeAddress)
     return {
       address: result[0],
-      orgAddress: result[1],
-      salary: Number(result[2]),
-      activity: result[4],
-      daysWorked: Number(result[3]),
+      employeeName: employeeDetails.name,
+      orgAddress: result[2],
+      verified: false,
+      salary: Number(result[3]),
+      activity: employeeDetails.job_title,
+      daysWorked: Number(result[4]),
     } as Employee
   }
   
