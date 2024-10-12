@@ -91,3 +91,31 @@ export const paymentHistory = [
       description: "Get started with dozens of web components and interactive elements built on top of Tailwind CSS."
     }
 ];
+
+export const companies = [
+  {
+    id: 1,
+    name: "NODIT",
+    img: "/nodit.jpg",
+  },
+  {
+    id: 2,
+    name: "APTOS",
+    img: "/aptos-white.png",
+  },
+  {
+    id: 3,
+    name: "PETRA WALLET",
+    img: "/petra.jpeg",
+  },
+  {
+    id: 4,
+    name: "MIZU WALLET",
+    img: "/mizu.jpg",
+  },
+  {
+    id: 5,
+    name: "NEXT.js",
+    img: "/nextjs.webp",
+  },
+];
