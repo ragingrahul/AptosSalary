@@ -6,39 +6,22 @@ import moment from 'moment'
 
 type Props = {
     employeeInfo: Employee
-    items: {
-        date: string
-        title: string
-        description: string
+    events: {
+        id: string,
+        title: string,
+        amount: number,
+        time: number,
+        type: string,
     }[]
 }
 
-const Timeline: React.FC<Props> = ({ employeeInfo, items }) => {
+const Timeline: React.FC<Props> = ({ employeeInfo, events }) => {
 
-    const { data: paymentMade } = useQuery(PAYOUT_RECEIVED, {
-        variables: {
-            companyAccount: employeeInfo.orgAddress,
-            accountAddress: employeeInfo.address,
-        },
-        fetchPolicy: 'no-cache'
-    })
-    console.log(paymentMade)
+    
 
-    const events = useMemo(() => {
-        const results = [];
-        if (paymentMade && paymentMade.events?.length) {
-            for (const payment of paymentMade.events) {
-                results.push({
-                    id: payment.id,
-                    title: 'Payment Received',
-                    amount: payment.salary,
-                    time: payment.timestamp,
-                    type: 'order4',
-                })
-            }
-        }
-        return results.sort((a, b) => b.time - a.time)
-    }, [paymentMade])
+    if (events.length === 0) {
+        return null; 
+    }
     return (
         <div className='flex justify-center relative my-2 z-10'>
             <div className='w-[650px] max-w-[89vw] md:max-w-2xl lg:max-w-[60vw] flex flex-col bg-[#181522] border border-[#846b8a] rounded-lg p-5'>
@@ -46,8 +29,8 @@ const Timeline: React.FC<Props> = ({ employeeInfo, items }) => {
                     Payment History
                 </h1>
                 {events.map((item, index) => (
-                    <div key={index} className={`relative  ${index != items.length - 1 && index != 0 && `border-gray-700 border-s`}`}>
-                        <div className={`relative  ${index != items.length - 1 && index != 0 && `border-gray-700 border-s`}`}>
+                    <div key={index} className={`relative  ${index != events.length - 1 && index != 0 && `border-gray-700 border-s`}`}>
+                        <div className={`relative  ${index != events.length - 1 && index != 0 && `border-gray-700 border-s`}`}>
                             <div className="h-[100px] ms-4">
                                 <div className="absolute w-4 h-4 bg-gray-200 rounded-full -start-2 border border-white dark:border-gray-900 dark:bg-yellow-500"></div>
                                 <div className='flex flex-row justify-between'>

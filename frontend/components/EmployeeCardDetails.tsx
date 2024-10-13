@@ -5,6 +5,7 @@ import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Employee } from '@/state/types'
 import { getUserByAddress } from '@/api/api'
 import { formatAddress } from '@/utils/helper'
+import { Progress } from './ui/progress'
 
 
 type User = {
@@ -15,29 +16,15 @@ type User = {
 
 type EmployeeProp = {
     employee: Employee
+    totalPayment: number
 }
-const EmployeeCardDetails = ({ employee }: EmployeeProp) => {
-    const { account } = useWallet();
-    //const [employee,setEmployee] = useState<User>();
-
-    // useEffect(()=>{
-    //     const fetchEmployeeDetails = async () =>{
-    //         if(account){
-    //             console.log(account.address)
-    //             const employeeDetails = await getUserByAddress(account?.address)
-    //             setEmployee(employeeDetails)
-    //             console.log(employeeDetails)
-    //             //console.log("From state",employee)
-    //         }
-    //     }
-    //     fetchEmployeeDetails()
-    // },[account])
-
-    // useEffect(() => {
-    //     if (employee) {
-    //         console.log("From state", employee);
-    //     }
-    // }, [employee]);
+const EmployeeCardDetails = ({ employee, totalPayment }: EmployeeProp) => {
+    const [progress, setProgress] = React.useState(13)
+ 
+    React.useEffect(() => {
+      const timer = setTimeout(() => setProgress((totalPayment/((employee?.salary/10e8)*30))*100), 700)
+      return () => clearTimeout(timer)
+    }, [])
 
 
     return (
@@ -92,16 +79,17 @@ const EmployeeCardDetails = ({ employee }: EmployeeProp) => {
                     <div className='flex flex-col md:flex-row items-center  w-full my-2'>
                         <div className="flex flex-col justify-between items-center md:items-start w-1/2 md:w-full">
                             <span className="font-semibold text-[#ffba96] ">Received this month</span>
-                            <span className="text-4xl my-2 font-extrabold">$1,454.26</span>
+                            <span className="text-4xl my-2 font-extrabold">{totalPayment} APT</span>
                         </div>
                         <div className="flex flex-col justify-between items-center md:items-start w-1/2 md:w-full">
                             <span className="font-semibold text-[#ffba96] ">Total Amount</span>
-                            <span className="text-4xl my-2 font-extrabold">$1,600.00</span>
+                            <span className="text-4xl my-2 font-extrabold">{(employee?.salary/10e8)*30} APT</span>
                         </div>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                    {/* <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
                         <div className="bg-blue-600 h-2.5 rounded-full w-[85%]"></div>
-                    </div>
+                    </div> */}
+                    <Progress value={progress} />
                 </div>
             </div>
         </div>
