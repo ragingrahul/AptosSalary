@@ -19,7 +19,7 @@ export function Navbar(props: Props) {
         >
             <div className="flex justify-between items-center w-full">
                 <img
-                    src="/logo.png"
+                    src="/logo2.png"
                     alt="logo"
                     className="w-[180px] h-[30px]"
                 />
