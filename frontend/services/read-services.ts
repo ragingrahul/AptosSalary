@@ -37,6 +37,24 @@ export async function fetchEmployeesMove(orgAddress: Address){
       daysWorked: Number(result[4]),
     } as Employee
   }
+
+  export async function fetchEmployeeIsVerified(employeeAddress: Address){
+    const aptosConfig = new AptosConfig({ network: Network.TESTNET });
+    const aptos = new Aptos(aptosConfig);
+  
+    const payload: InputViewFunctionData = {
+      function: `${process.env.NEXT_PUBLIC_MODULE_ADDRESS}::simplepayroll::get_empl_is_verified`,
+      functionArguments: [employeeAddress, process.env.NEXT_PUBLIC_CONTRACT_OWNER],
+    }
+    const result = await aptos.view({
+      payload
+    });
+
+    return{
+      verified: result[0]
+    }
+  }
+
   
   export async function fetchOrganizationMove(orgAddress: Address) {
     const aptosConfig = new AptosConfig({ network: Network.TESTNET });

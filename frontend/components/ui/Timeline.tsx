@@ -46,8 +46,8 @@ const Timeline: React.FC<Props> = ({ employeeInfo, items }) => {
                     Payment History
                 </h1>
                 {events.map((item, index) => (
-                    <div className={`relative  ${index != items.length - 1 && `border-gray-700 border-s`}`}>
-                        <div className={`relative  ${index != items.length - 1 && `border-gray-700 border-s`}`}>
+                    <div key={index} className={`relative  ${index != items.length - 1 && index != 0 && `border-gray-700 border-s`}`}>
+                        <div className={`relative  ${index != items.length - 1 && index != 0 && `border-gray-700 border-s`}`}>
                             <div className="h-[100px] ms-4">
                                 <div className="absolute w-4 h-4 bg-gray-200 rounded-full -start-2 border border-white dark:border-gray-900 dark:bg-yellow-500"></div>
                                 <div className='flex flex-row justify-between'>
@@ -59,7 +59,6 @@ const Timeline: React.FC<Props> = ({ employeeInfo, items }) => {
                                         +{item.amount} APT
                                     </div>
                                 </div>
-                                {/* <p className="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">{item.description}</p> */}
                             </div>
                         </div>
                     </div>

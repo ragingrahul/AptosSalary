@@ -39,6 +39,7 @@ export async function addEmployeeMove(
 }
 
 export async function verifyEmployee(
+  employeeAddress: string,
   inputString: string,
   signAndSubmitTransaction: (transaction: InputTransactionData) => Promise<{ hash: string }>
 ){
@@ -98,6 +99,8 @@ export async function verifyEmployee(
           data: {
           function: `${process.env.NEXT_PUBLIC_MODULE_ADDRESS}::simplepayroll::verify_employee`,
           functionArguments: [
+                  process.env.NEXT_PUBLIC_CONTRACT_OWNER,
+                  employeeAddress,
                   Array.from(Buffer.from(alpha, 'hex')),
                   Array.from(Buffer.from(beta, 'hex')),
                   Array.from(Buffer.from(gamma, 'hex')),
