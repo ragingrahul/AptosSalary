@@ -63,7 +63,9 @@ export const ShimmerButton = ({
             <button
               className={`inline-flex h-10 w-full animate-shimmer items-center justify-around rounded-t-md border-x border-t border-slate-800 bg-black px-6 gap-3 font-light text-sm text-slate-400 focus:outline-none  ${otherClasses}`}
               onClick={() => {
-                
+                const wallet = wallets?.[0]
+                dispatch(setRole('employer'))
+                if (wallet) connect(wallet.name)
               }}
             >
               <PiHandDeposit  />
@@ -72,7 +74,9 @@ export const ShimmerButton = ({
             <button
               className={`inline-flex h-10 w-full animate-shimmer items-center justify-around rounded-b-md border-x border-b border-slate-800 bg-black px-6 gap-3 font-light text-sm text-slate-400 focus:outline-none  ${otherClasses}`}
               onClick={() => {
-                
+                const wallet = wallets?.[0]
+                dispatch(setRole('employee'))
+                if (wallet) connect(wallet.name)
               }}
             >
               <GiReceiveMoney />
