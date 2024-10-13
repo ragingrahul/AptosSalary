@@ -18,6 +18,8 @@ import { formatAddress } from '@/utils/helper'
 import { IoCardSharp } from 'react-icons/io5'
 import { paySalaryMove } from '@/services/write-services'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
+import { fetchEmployeeIsVerified } from '@/services/read-services'
+import { useToast } from '@/hooks/use-toast'
 export type Employee = {
     address: string
     employeeName: string
@@ -38,6 +40,7 @@ const EmployerGraphs = ({address}:AddressProp) => {
     const [employees,setEmployees] = useState<Employee[]>()
     const dispatch = useAppDispatch()
     const org = useAppSelector(selectOrganization)
+    const {toast} = useToast()
 
     const columns: ColumnDef<Employee>[] = [
 
@@ -60,6 +63,7 @@ const EmployerGraphs = ({address}:AddressProp) => {
             header: "Verified",
             cell: ({ row }) => {
                 const verified = row.getValue("verified") as boolean
+                
                 return (
                     <div className="flex">
                         {verified ? (
@@ -101,7 +105,7 @@ const EmployerGraphs = ({address}:AddressProp) => {
             id: "actions",
             enableHiding: false,
             cell: ({ row }) => {
-                const address = row.original.address;
+                const employee = row.original;
     
                 return (
                     <DropdownMenu>
@@ -116,8 +120,16 @@ const EmployerGraphs = ({address}:AddressProp) => {
                                 className='gap-2'
                                 onClick={async () => {
                                     try {
-                                      const tx = await paySalaryMove(address,signAndSubmitTransaction)
-                                      console.log(tx)
+                                      if(!employee.verified){
+                                        toast({
+                                            variant: "destructive",
+                                            title: "Payment Failed",
+                                            description: "Employee has not yet performed ZK Verification",
+                                          })
+                                      }else{
+                                        const tx = await paySalaryMove(employee.address,signAndSubmitTransaction)
+                                        console.log(tx)
+                                      }
                                     } catch (error) {
                                       console.error(error)
                                     }
@@ -147,6 +159,7 @@ const EmployerGraphs = ({address}:AddressProp) => {
                     const employees = await Promise.all(
                         data.events.map(async (item: any) => {
                             const employeeDetails = await getUserByAddress(item.employee_account);
+                            const isVerified= await fetchEmployeeIsVerified(item.employee_account);
                 
                             return {
                                 address: item.employee_account,
@@ -154,7 +167,7 @@ const EmployerGraphs = ({address}:AddressProp) => {
                                 orgAddress: item.company_account,
                                 activity: employeeDetails.job_title,
                                 salary: Number(item.daily_salary)/10e7,
-                                verified: false,
+                                verified: isVerified.verified,
                                 daysWorked: Math.floor((Date.now()-item.timestamp*1000)/(24*1000 * 60 * 60)),
                             };
                         })

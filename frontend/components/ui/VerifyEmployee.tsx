@@ -63,7 +63,7 @@ export function VerifyEmployee() {
             if(account){
                 const result = await verifyUserCommitment(account?.address)
                 console.log(result)
-                const response = await verifyEmployee(result,signAndSubmitTransaction)
+                const response = await verifyEmployee(data.walletAddress,result,signAndSubmitTransaction)
                 console.log(response)
             }
           } catch (error) {

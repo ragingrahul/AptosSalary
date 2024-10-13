@@ -3,6 +3,8 @@ import localFont from "next/font/local";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ApolloProvider, AppStateProvider, PetraWalletProvider, ThemeProvider } from "./provider";
+import { Toaster } from "@/components/ui/toaster";
+
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -41,6 +43,7 @@ export default function RootLayout({
           >
             <PetraWalletProvider>
               {children}
+              <Toaster />
             </PetraWalletProvider>
           </ThemeProvider>
           </AppStateProvider>

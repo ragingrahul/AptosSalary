@@ -5,7 +5,7 @@ import EmployeeCardDetails from './EmployeeCardDetails'
 import Timeline from './ui/Timeline'
 import { paymentHistory } from '@/data'
 import { Employee } from '@/state/types'
-import { fetchEmployeeMove } from '@/services/read-services'
+import { fetchEmployeeIsVerified, fetchEmployeeMove } from '@/services/read-services'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 
 const EmployeeHero = () => {
@@ -16,7 +16,9 @@ const EmployeeHero = () => {
         async function fetchData() {
             if (account) {
                 try {
+                    const isVerified= await fetchEmployeeIsVerified(account.address); 
                     fetchEmployeeMove(account.address).then((employee) => {
+                        employee.verified=isVerified.verified as boolean;
                         setEmployeeInfo(employee)
                         console.log(employee)
                     })

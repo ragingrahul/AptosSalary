@@ -11,13 +11,13 @@ type User = {
     address: string
     job_title: string
     name: string
-  }
+}
 
 type EmployeeProp = {
     employee: Employee
 }
-const EmployeeCardDetails = ({employee}:EmployeeProp) => {
-    const {account} = useWallet();
+const EmployeeCardDetails = ({ employee }: EmployeeProp) => {
+    const { account } = useWallet();
     //const [employee,setEmployee] = useState<User>();
 
     // useEffect(()=>{
@@ -38,7 +38,7 @@ const EmployeeCardDetails = ({employee}:EmployeeProp) => {
     //         console.log("From state", employee);
     //     }
     // }, [employee]);
-    
+
 
     return (
         <div className='flex justify-center relative mt-20 mb-2 z-10'>
@@ -47,7 +47,13 @@ const EmployeeCardDetails = ({employee}:EmployeeProp) => {
                     <h1 className='text-xl font-bold text-purple'>
                         Employee Card
                     </h1>
-                    <VerifyEmployee />
+                    {employee.verified ? (
+                        <div className= "text-green-500 font-bold text-center rounded">
+                            ZK Verification Done
+                        </div>
+                    ) : (
+                        <VerifyEmployee />
+                    )}
                 </div>
                 <div className='w-full flex flex-col md:flex-row justify-between items-center my-6 p-4 rounded-lg bg-[#36324c9b]'>
                     <div className='flex flex-col'>
@@ -57,7 +63,7 @@ const EmployeeCardDetails = ({employee}:EmployeeProp) => {
                             </div>
                         </div>
                         <p className='text-md font-bold'>
-                           Salary Card
+                            Salary Card
                         </p>
                     </div>
                     <div className='flex flex-col justify-around w-[300px] p-2 gap-3'>
@@ -77,8 +83,8 @@ const EmployeeCardDetails = ({employee}:EmployeeProp) => {
                         </div>
 
                         <div className="flex justify-between">
-                            <span className="font-semibold text-white-100 ">CVV</span>
-                            <span className="">****</span>
+                            <span className="font-semibold text-white-100 ">Salary</span>
+                            <span className="font-bold">{employee?.salary/10e8} APT</span>
                         </div>
                     </div>
                 </div>
