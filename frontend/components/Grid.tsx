@@ -22,7 +22,11 @@ const Grid = () => {
           />
         ))}
       </BentoGrid>
-      <div className="flex flex-wrap items-center justify-center gap-4 md:gap-16 max-lg:mt-10">
+      <div className="flex flex-col flex-wrap items-center justify-center gap-4 md:gap-10 max-lg:mt-10">
+          <h1 className="font-extrabold text-2xl">
+            Powered By
+          </h1>
+          <div className="flex flex-wrap items-center justify-center gap-20">
           {companies.map((company) => (
             <React.Fragment key={company.id}>
               <div className="flex items-center md:max-w-60 max-w-32 gap-2">
@@ -43,6 +47,7 @@ const Grid = () => {
               </div>
             </React.Fragment>
           ))}
+          </div>
         </div>
     </section>
   );

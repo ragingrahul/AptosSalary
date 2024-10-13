@@ -5,6 +5,7 @@ import EmployerHero from "@/components/EmployerHero";
 import Footer from "@/components/Footer";
 import Grid from "@/components/Grid";
 import Hero from "@/components/Hero";
+import { AddOrg } from "@/components/ui/AddOrg";
 import { Navbar } from "@/components/ui/NavBar";
 import { fetchOrganizationMove } from "@/services/read-services";
 import { setOrganization } from "@/state/app";
@@ -71,7 +72,7 @@ export default function Home() {
             <EmployeeHero />
           </div>
         }
-        {connected && role == 'employer' && account &&
+        {connected && role == 'employer' && org && account &&
           <div className="w-full">
             <Navbar
               title='Disconnect'
@@ -79,6 +80,12 @@ export default function Home() {
               position='left'
             />
             <EmployerHero address={account.address}/>
+          </div>
+        }
+        {
+          connected && role == 'employer' && account && !org &&
+          <div> 
+            <AddOrg />
           </div>
         }
       </div>

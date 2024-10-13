@@ -7,10 +7,15 @@ import { paymentHistory } from '@/data'
 import { Employee } from '@/state/types'
 import { fetchEmployeeIsVerified, fetchEmployeeMove } from '@/services/read-services'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
+import { useToast } from '@/hooks/use-toast'
+import { setRole } from '@/state/app'
+import { useAppDispatch } from '@/state/hooks'
 
 const EmployeeHero = () => {
-    const [employeeInfo, setEmployeeInfo] = useState<Employee | undefined>(undefined);
-    const { account, submitTransaction } = useWallet()
+    const dispatch = useAppDispatch()
+    const [employeeInfo, setEmployeeInfo] = useState<Employee | undefined>(undefined)
+    const { account, wallets, disconnect } = useWallet()
+    const {toast} = useToast()
 
     useEffect(() => {
         async function fetchData() {
@@ -23,6 +28,22 @@ const EmployeeHero = () => {
                         console.log(employee)
                     })
                 } catch (error) {
+                    toast({
+                        variant: "destructive",
+                        title: "Employee Not Found",
+                        description: "Your Address is not registered as an employee",
+                        duration:3000
+                    }) 
+                    
+
+                    const wallet = wallets?.[0];
+                    if (wallet) {
+                        // Delay the disconnect by 3000 milliseconds
+                        setTimeout(() => {
+                            dispatch(setRole('nill'));
+                            disconnect();
+                        }, 3000); // 3000 milliseconds = 3 seconds
+                    }
                     console.error(error)
                 }
             }
