@@ -2,12 +2,6 @@
 
 import * as React from "react"
 import {
-    CaretSortIcon,
-    CheckIcon,
-    ChevronDownIcon,
-    DotsHorizontalIcon,
-} from "@radix-ui/react-icons"
-import {
     ColumnDef,
     ColumnFiltersState,
     SortingState,
@@ -21,17 +15,13 @@ import {
 } from "@tanstack/react-table"
 
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
+
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
     DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
+
 import {
     Table,
     TableBody,
@@ -40,17 +30,9 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { ImCross } from "react-icons/im";
-import { RxCross2 } from "react-icons/rx";
+import { Employee } from "@/state/types"
 
-export type Employee = {
-    address: string
-    employeeName: string
-    verified: boolean
-    salary: number
-    activity: string
-    daysWorked: number
-}
+
 export type Event = {
     transactionId: string
     eventName: string

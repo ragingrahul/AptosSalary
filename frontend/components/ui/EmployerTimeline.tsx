@@ -10,14 +10,6 @@ import { Address } from '@/state/types'
 import moment from 'moment'
 import { getColorClass } from '@/utils/helper'
 
-export type Employee = {
-    address: string
-    employeeName: string
-    verified: boolean
-    salary: number
-    activity: string
-    daysWorked: number
-}
 
 export type Event = {
     transactionId: string
