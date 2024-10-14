@@ -20,15 +20,7 @@ import { paySalaryMove } from '@/services/write-services'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { fetchEmployeeIsVerified } from '@/services/read-services'
 import { useToast } from '@/hooks/use-toast'
-export type Employee = {
-    address: string
-    employeeName: string
-    orgAddress: string
-    verified: boolean
-    salary: number
-    activity: string
-    daysWorked: number
-}
+import { Employee } from '@/state/types'
 
 
 type AddressProp = {

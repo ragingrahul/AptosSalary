@@ -1,18 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { VerifyEmployee } from './ui/VerifyEmployee'
-import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Employee } from '@/state/types'
-import { getUserByAddress } from '@/api/api'
 import { formatAddress } from '@/utils/helper'
 import { Progress } from './ui/progress'
-
-
-type User = {
-    address: string
-    job_title: string
-    name: string
-}
 
 type EmployeeProp = {
     employee: Employee
