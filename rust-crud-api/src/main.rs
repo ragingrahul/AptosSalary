@@ -1,4 +1,3 @@
-use std::borrow::Borrow;
 use std::env;
 use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
@@ -74,7 +73,7 @@ async fn main() {
         return;
     }
 
-    let listener = TcpListener::bind(format!("0.0.0.0:8080")).unwrap();
+    let listener = TcpListener::bind(format!("0.0.0.0:8081")).unwrap();
     println!("Server started at port 8080");
 
     for stream in listener.incoming() {
@@ -108,7 +107,7 @@ async fn handle_client(client: &Client, mut stream: TcpStream) {
                 r if r.starts_with("POST /users") => handle_post_request(&client, r).await,
                 r if r.starts_with("GET /user/") => handle_get_request(&client, r).await,
                 r if r.starts_with("GET /users") => handle_get_all_request(&client).await,
-                r if r.starts_with("GET /verify/") => handle_verify_request(&client, r).await,
+                r if r.starts_with("POST /verify") => handle_verify_request(&client, r).await,
                 //r if r.starts_with("PUT /users/")=> handle_put_request(r),
                 r if r.starts_with("DELETE /users/") => handle_delete_request(&client, r).await,
                 _ => (NOT_FOUND.to_string(), "404 Not Found".to_string()),
@@ -219,19 +218,21 @@ async fn handle_delete_request(client: &Client, request: &str) -> (String, Strin
 }
 
 async fn handle_verify_request(client: &Client, request: &str) -> (String, String) {
-    match get_id(&request).parse::<String>() {
-        Ok(id) => {
+    // Parse the JSON body of the request to extract the name, job title, and address
+    match get_user_request_body(&request) {
+        Ok(user) => {
             let db = client.database("EmployeeDB");
             let collection = db.collection::<User>("EmpCollection1");
 
-            let filter = doc! {"address": id};
+            let filter = doc! {"address": user.address.clone()};
 
             match collection.find_one(Some(filter), None).await {
                 Ok(Some(result)) => {
-                    let input_commitment = format!("{}{}{}", result.name, result.job_title, result.address);
+                    let input_commitment = format!("{}{}{}", user.name, user.job_title, user.address);
+                    let input_commitment_server = format!("{}{}{}", result.name, result.job_title, result.address);
                     let commitment = generate_sha256_hash(&input_commitment);
-                    let vk_serialized = groth16_verify(&commitment);
-                    let concat_commitment = format!("Employer {{input: \"{}\"}}", commitment);
+                    let commitment_server = generate_sha256_hash(&input_commitment_server);
+                    let vk_serialized = groth16_verify(&commitment,&commitment_server);
                     let vk_input_serialized =format!("{:?}",vk_serialized);
                     (OK_RESPONSE.to_string(), vk_input_serialized)
                 }
@@ -239,9 +240,10 @@ async fn handle_verify_request(client: &Client, request: &str) -> (String, Strin
                 Err(e) => (NOT_FOUND.to_string(), format!("Error {}", e)),
             }
         }
-        _ => (INTERNAL_SERVER_ERROR.to_string(), "Error".to_string()),
+        Err(_) => (INTERNAL_SERVER_ERROR.to_string(), "Error parsing request".to_string()),
     }
 }
+
 
 async fn set_database(client: &Client) -> Result<(), Error> {
     let db = client.database("EmployeeDB");
@@ -263,16 +265,16 @@ fn get_user_request_body(request: &str) -> Result<User, serde_json::Error> {
     serde_json::from_str(request.split("\r\n\r\n").nth(1).unwrap_or_default())
 }
 
-fn vec_string(input: &Vec<[u8; 32]>) -> String {
-    let hex_string: String = input
-        .iter() 
-        .flat_map(|array| array.iter()) 
-        .map(|&byte| format!("{:02x}", byte)) 
-        .collect::<Vec<String>>() 
-        .join(""); 
+// fn vec_string(input: &Vec<[u8; 32]>) -> String {
+//     let hex_string: String = input
+//         .iter() 
+//         .flat_map(|array| array.iter()) 
+//         .map(|&byte| format!("{:02x}", byte)) 
+//         .collect::<Vec<String>>() 
+//         .join(""); 
 
-    hex_string
-}
+//     hex_string
+// }
 
 fn generate_sha256_hash(input: &str) -> String {
     let mut hasher = Sha256::new();
@@ -284,12 +286,14 @@ fn generate_sha256_hash(input: &str) -> String {
    
 }
 
-fn groth16_verify(input: &str) -> String {
+fn groth16_verify(input: &str,server_input: &str) -> String {
     let cfg = CircomConfig::<Fr>::new("src/commitment.wasm", "src/commitment.r1cs").unwrap();
     let mut builder = CircomBuilder::new(cfg);
     
     let big_int_val = BigInt::parse_bytes(input.as_bytes(), 16)
-       .expect("Failed to convert hex to BigInt");
+        .expect("Failed to convert hex to BigInt");
+    let big_int_val_server = BigInt::parse_bytes(server_input.as_bytes(), 16)
+        .expect("Failed to convert hex to BigInt");
 
     let circom = builder.setup();
     let mut rng = thread_rng();
@@ -297,8 +301,8 @@ fn groth16_verify(input: &str) -> String {
     let params = {
         Groth16::<Bls12_381>::generate_random_parameters_with_reduction(circom, &mut rng).unwrap()
     };
-    builder.push_input("employeeHashedCommitment", big_int_val.clone());
-    builder.push_input("employeerHashedCommitment", big_int_val.clone());
+    builder.push_input("employeeHashedCommitment", big_int_val);
+    builder.push_input("employeerHashedCommitment", big_int_val_server);
 
     
     
