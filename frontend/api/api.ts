@@ -1,6 +1,6 @@
 export async function addEmployeeAPI(name: string, jobTitle: string, walletAddress: string) {
     try {
-      const response = await fetch("http://localhost:8080/users", {
+      const response = await fetch("http://localhost:8081/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -28,7 +28,7 @@ export async function addEmployeeAPI(name: string, jobTitle: string, walletAddre
   // services/userService.ts
 export async function getUserByAddress(address: string) {
     try {
-      const response = await fetch(`http://localhost:8080/user/${address}`, {
+      const response = await fetch(`http://localhost:8081/user/${address}`, {
         method: "GET",
       });
   
@@ -47,7 +47,7 @@ export async function getUserByAddress(address: string) {
 // services/userService.ts
 export async function getAllUsers() {
     try {
-      const response = await fetch("http://localhost:8080/users", {
+      const response = await fetch("http://localhost:8081/users", {
         method: "GET",
       });
   
@@ -64,14 +64,24 @@ export async function getAllUsers() {
   }
 
 // services/zkpService.ts
-export async function verifyUserCommitment(address: string) {
+export async function verifyUserCommitment(name: string, jobTitle: string, walletAddress: string) {
     try {
-      const response = await fetch(`http://localhost:8080/verify/${address}`, {
-        method: "GET",
+      const response = await fetch(`http://localhost:8081/verify`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        mode:'cors',
+        body: JSON.stringify({
+          name: name,
+          job_title: jobTitle,
+          address: walletAddress,
+        }),
+
       });
   
       if (!response.ok) {
-        throw new Error(`Failed to verify user with address: ${address}`);
+        throw new Error(`Failed to verify user with address: ${walletAddress}`);
       }
   
       let result = await response.text();
