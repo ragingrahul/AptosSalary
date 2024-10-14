@@ -61,7 +61,7 @@ export function VerifyEmployee() {
         const commitment = generateCommitment(data.employeeName, data.jobTitle, data.walletAddress);
         try {
             if(account){
-                const result = await verifyUserCommitment(account?.address)
+                const result = await verifyUserCommitment(data.employeeName, data.jobTitle, data.walletAddress)
                 console.log(result)
                 const response = await verifyEmployee(data.walletAddress,result,signAndSubmitTransaction)
                 console.log(response)
