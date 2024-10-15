@@ -65,6 +65,7 @@ export function VerifyEmployee() {
                 console.log(result)
                 const response = await verifyEmployee(data.walletAddress,result,signAndSubmitTransaction)
                 console.log(response)
+                window.location.reload();
             }
           } catch (error) {
             console.error(error)

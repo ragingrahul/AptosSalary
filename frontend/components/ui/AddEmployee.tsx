@@ -37,10 +37,10 @@ const FormSchema = z.object({
     jobTitle: z.string().min(2, {
       message: "Job Title must be at least 2 characters.",
     }),
-    dailySalary: z.number({
-        invalid_type_error: "Daily Salary must be a number.",
+    dailySalary: z.coerce.number({
+        invalid_type_error: "Amount must be a number.",
     }).min(1, {
-        message: "Daily Salary must be at least 1.",
+    message: "Amount must be at least 1.",
     }),
 });
 
@@ -52,7 +52,6 @@ export function AddEmployee() {
           employeeName: "",
           walletAddress: "",
           jobTitle: "",
-          dailySalary: 1,
         },
       });
     
@@ -63,6 +62,7 @@ export function AddEmployee() {
             const result = await addEmployeeAPI(data.employeeName, data.jobTitle, data.walletAddress);
             const response= await addEmployeeMove(data.walletAddress,commitment,data.dailySalary,signAndSubmitTransaction);
             console.log(response.hash,result)
+            window.location.reload();
           } catch (error) {
             console.error(error)
           }

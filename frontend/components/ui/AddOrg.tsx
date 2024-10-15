@@ -50,6 +50,7 @@ export function AddOrg() {
         try {
             const result = await createOrgMove(data.orgName,signAndSubmitTransaction);
             console.log(result)
+            window.location.reload();
         } catch (error) {
             console.error(error)
         }

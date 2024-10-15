@@ -35,6 +35,6 @@ export type Organization = {
   orgName: string
   orgTreasury: number
   employees?: Employee[]
-}
+} | undefined
 
 export type Address = string

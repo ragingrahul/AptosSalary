@@ -1,12 +1,23 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Spotlight } from './ui/Spotlight'
 import { GridBackgroundDemo } from './ui/Grid'
 import { TextGenerateEffect } from './ui/TextGenerateEffect'
 import { ShimmerButton } from './ui/ShimmerButton'
 import { PiHandDeposit } from 'react-icons/pi'
 import { GiReceiveMoney } from 'react-icons/gi'
+import { WalletSelector } from './ui/WalletSelector'
 
 const Hero = () => {
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+    const openWalletDialog = () => {
+      setIsDialogOpen(true);
+    };
+  
+    const closeWalletDialog = () => {
+      setIsDialogOpen(false);
+    };
+
     return (
         <div className='pb-20 pt-36'>
             <div>
@@ -32,11 +43,21 @@ const Hero = () => {
                             title='Employee Login'
                             icon={<GiReceiveMoney />}
                             position='left'
+                            openWalletDialog={openWalletDialog}
+                        />
+                        <WalletSelector
+                            isDialogOpen={isDialogOpen}
+                            closeDialog={closeWalletDialog}
                         />
                         <ShimmerButton
                             title='Employeer Login'
                             icon={<PiHandDeposit  />}
                             position='left'
+                            openWalletDialog={openWalletDialog}
+                        />
+                        <WalletSelector
+                            isDialogOpen={isDialogOpen}
+                            closeDialog={closeWalletDialog}
                         />
                     </div>
                 </div>
