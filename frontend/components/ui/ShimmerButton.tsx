@@ -1,7 +1,7 @@
-import { setRole } from '@/state/app'
+import { setOrganization, setRole } from '@/state/app'
 import { useAppDispatch } from '@/state/hooks'
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useState } from 'react'
 import { GiReceiveMoney } from 'react-icons/gi'
 import { PiHandDeposit } from 'react-icons/pi'
 
@@ -11,9 +11,10 @@ type Props = {
   position: string
   handleClick?: () => void
   otherClasses?: string
+  openWalletDialog?: () => void;
 }
 export const ShimmerButton = ({
-  title, icon, position, handleClick, otherClasses
+  title, icon, position, handleClick, otherClasses, openWalletDialog
 }: Props) => {
   const dispatch = useAppDispatch()
   const { wallets, connect, disconnect } = useWallet();
@@ -30,19 +31,25 @@ export const ShimmerButton = ({
               toggleDropdown()
             }
             else if(title === 'Employee Login'){
-              const wallet = wallets?.[0]
+              // const wallet = wallets?.[0]
               dispatch(setRole('employee'))
-              if (wallet) connect(wallet.name)
+              // if (wallet) connect(wallet.name)
+              if(openWalletDialog)
+                openWalletDialog();
             }
             else if(title === 'Employeer Login'){
-              const wallet = wallets?.[0]
+              // const wallet = wallets?.[0]
               dispatch(setRole('employer'))
-              if (wallet) connect(wallet.name)
+              // if (wallet) connect(wallet.name)
+              if(openWalletDialog)
+                openWalletDialog();
             }
             else if(title === 'Disconnect'){
               dispatch(setRole('nill'))
-              const wallet = wallets?.[0]
-              if (wallet) disconnect()
+              dispatch(setOrganization(undefined))
+              // const wallet = wallets?.[0]
+              // if (wallet) disconnect()
+              disconnect()
             }
 
           }}
@@ -63,9 +70,11 @@ export const ShimmerButton = ({
             <button
               className={`inline-flex h-10 w-full animate-shimmer items-center justify-around rounded-t-md border-x border-t border-slate-800 bg-black px-6 gap-3 font-light text-sm text-slate-400 focus:outline-none  ${otherClasses}`}
               onClick={() => {
-                const wallet = wallets?.[0]
+                // const wallet = wallets?.[0]
                 dispatch(setRole('employer'))
-                if (wallet) connect(wallet.name)
+                // if (wallet) connect(wallet.name)
+                if(openWalletDialog)
+                  openWalletDialog();
               }}
             >
               <PiHandDeposit  />
@@ -74,9 +83,11 @@ export const ShimmerButton = ({
             <button
               className={`inline-flex h-10 w-full animate-shimmer items-center justify-around rounded-b-md border-x border-b border-slate-800 bg-black px-6 gap-3 font-light text-sm text-slate-400 focus:outline-none  ${otherClasses}`}
               onClick={() => {
-                const wallet = wallets?.[0]
+                // const wallet = wallets?.[0]
                 dispatch(setRole('employee'))
-                if (wallet) connect(wallet.name)
+                // if (wallet) connect(wallet.name)
+                if(openWalletDialog)
+                  openWalletDialog();
               }}
             >
               <GiReceiveMoney />

@@ -14,6 +14,7 @@ import store from '@/state/store'
 
 import { PetraWallet } from "petra-plugin-wallet-adapter";
 import { AptosWalletAdapterProvider } from "@aptos-labs/wallet-adapter-react";
+import { Network } from "@aptos-labs/ts-sdk";
 
 export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
   return <NextThemesProvider {...props}>{children}</NextThemesProvider>
@@ -38,7 +39,26 @@ const wallets = [new PetraWallet()];
 
 export function PetraWalletProvider({children}:{children: React.ReactNode}) {
   return (
-    <AptosWalletAdapterProvider plugins={wallets} autoConnect={true}>
+    <AptosWalletAdapterProvider 
+      // plugins={wallets} 
+      autoConnect={true}
+      dappConfig={{
+        network: Network.TESTNET,
+        // aptosApiKey: process.env.NEXT_PUBLIC_APTOS_API_KEY,
+        // aptosConnect: { dappId: "57fa42a9-29c6-4f1e-939c-4eefa36d9ff5" },
+        mizuwallet: {
+          manifestURL:
+            "https://assets.mz.xyz/static/config/mizuwallet-connect-manifest.json",
+        },
+      }}
+      // onError={(error) => {
+      //   toast({
+      //     variant: "destructive",
+      //     title: "Error",
+      //     description: error || "Unknown wallet error",
+      //   });
+      // }}
+      >
       {children}
     </AptosWalletAdapterProvider>
   )

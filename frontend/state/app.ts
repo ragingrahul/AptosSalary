@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { Action, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AppState, Organization, Role } from './types'
 
 export const APP_INITIAL_STATE: AppState = {
@@ -13,7 +13,7 @@ const counterSlice = createSlice({
     setRole: (state, action: PayloadAction<Role>) => {
       state.role = action.payload
     },
-    setOrganization: (state, action: PayloadAction<Organization>) => {
+    setOrganization: (state, action: PayloadAction<Organization | undefined>) => {
       state.organization = action.payload
     },
   },

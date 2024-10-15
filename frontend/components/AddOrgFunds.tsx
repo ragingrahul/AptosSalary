@@ -41,6 +41,7 @@ export function AddOrgFunds({orgName}:OrgProp) {
     try {
       const tx = await fundTreasuryMove(data.amount*10e7,signAndSubmitTransaction)
       console.log(tx)
+      window.location.reload();
     } catch (error) {
       console.error(error)
     }
